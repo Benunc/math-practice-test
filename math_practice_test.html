@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CP Statistical Modeling Practice Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .stats-bar {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e9ecef;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .scoreboard {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .score-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .score-label {
+            font-size: 0.85em;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+
+        .score-value {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .score-correct {
+            color: #28a745;
+        }
+
+        .score-wrong {
+            color: #dc3545;
+        }
+
+        .score-unanswered {
+            color: #6c757d;
+        }
+
+        .progress-container {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 25px;
+            background: #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.85em;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .part-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            margin: 30px 0 20px 0;
+            border-left: 5px solid #667eea;
+            border-radius: 5px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .question {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .question.answered {
+            border-color: #28a745;
+            background: #f0fff4;
+        }
+
+        .question-number {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .question-text {
+            margin-bottom: 15px;
+            line-height: 1.6;
+            color: #212529;
+        }
+
+        .question-text table {
+            margin: 15px 0;
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .question-text table td, .question-text table th {
+            border: 1px solid #dee2e6;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .question-text table th {
+            background: #e9ecef;
+            font-weight: bold;
+        }
+
+        .options {
+            margin-top: 15px;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 12px;
+            background: white;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .option input[type="radio"],
+        .option input[type="checkbox"] {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #e7f3ff;
+        }
+
+        .option.correct {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+
+        .option.incorrect {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #dee2e6;
+            border-radius: 5px;
+            font-size: 1em;
+            margin-top: 10px;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-size: 0.95em;
+        }
+
+        .button-group {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .results {
+            display: none;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .results h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .final-score {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #28a745;
+        }
+
+        @media (max-width: 768px) {
+            .stats-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .scoreboard {
+                justify-content: space-around;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CP Statistical Modeling Practice Test</h1>
+            <p>Final Exam Preparation</p>
+        </div>
+
+        <div class="stats-bar">
+            <div class="scoreboard">
+                <div class="score-item">
+                    <div class="score-label">Correct</div>
+                    <div class="score-value score-correct" id="correct-count">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Wrong</div>
+                    <div class="score-value score-wrong" id="wrong-count">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Unanswered</div>
+                    <div class="score-value score-unanswered" id="unanswered-count">0</div>
+                </div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-label">
+                    <span>Progress</span>
+                    <span id="progress-text">0 / 0</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%">0%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content" id="test-content">
+            <!-- Questions will be inserted here -->
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="checkAnswers()">Check Answers</button>
+            <button class="btn btn-secondary" onclick="resetTest()">Reset Test</button>
+        </div>
+
+        <div class="results" id="results">
+            <h2>Test Complete!</h2>
+            <div class="final-score" id="final-score">0%</div>
+            <p id="results-text"></p>
+        </div>
+    </div>
+
+    <script>
+        // Questions data structure
+        const questions = [
+            {
+                id: 'p1q1',
+                part: 'Part I: Exploring and Understanding Data',
+                number: 1,
+                text: 'Which of the following represents categorical data? Select all that apply.',
+                type: 'multiple',
+                options: [
+                    { id: 'A', text: 'Eye color of students' },
+                    { id: 'B', text: 'Number of siblings a student has' },
+                    { id: 'C', text: 'Type of pet owned (dog, cat, bird, none)' },
+                    { id: 'D', text: 'Test scores on a math exam' },
+                    { id: 'E', text: 'Brand of cellphone used' },
+                    { id: 'F', text: 'Height of students in inches' }
+                ],
+                correct: ['A', 'C', 'E']
+            },
+            {
+                id: 'p1q2',
+                part: 'Part I: Exploring and Understanding Data',
+                number: 2,
+                text: 'What percent of the class is Late?<br><br><table><tr><th></th><th>Late</th><th>Not Late</th><th>Total</th></tr><tr><th>Male</th><td>10</td><td>5</td><td>15</td></tr><tr><th>Female</th><td>4</td><td>12</td><td>16</td></tr><tr><th>Total</th><td>14</td><td>17</td><td>31</td></tr></table>',
+                type: 'single',
+                options: [
+                    { id: 'A', text: '14%' },
+                    { id: 'B', text: '37%' },
+                    { id: 'C', text: '52%' },
+                    { id: 'D', text: '67%' }
+                ],
+                correct: ['C']
+            },
+            {
+                id: 'p1q3',
+                part: 'Part I: Exploring and Understanding Data',
+                number: 3,
+                text: 'A survey was conducted to determine the number of students enrolled at NSHS by grade level. Which grade level had the most students?<br><div class="info-box">Enrollment: Freshmen: 125, Sophomores: 100, Juniors: 50, Seniors: 25</div>',
+                type: 'single',
+                options: [
+                    { id: 'A', text: 'Freshman' },
+                    { id: 'B', text: 'Sophomore' },
+                    { id: 'C', text: 'Junior' },
+                    { id: 'D', text: 'Senior' },
+                    { id: 'E', text: 'Second-Year Senior' }
+                ],
+                correct: ['A']
+            },
+            {
+                id: 'p1q4',
+                part: 'Part I: Exploring and Understanding Data',
+                number: 4,
+                text: 'Which of the following graphs can be used to display numerical (quantitative) data? Select all that apply.',
+                type: 'multiple',
+                options: [
+                    { id: 'A', text: 'Pie Chart' },
+                    { id: 'B', text: 'Bar Graph' },
+                    { id: 'C', text: 'Dot Plot' },
+                    { id: 'D', text: 'Histogram' },
+                    { id: 'E', text: 'Stem-and-Leaf Plot' }
+                ],
+                correct: ['C', 'D', 'E']
+            },
+            {
+                id: 'p1q5',
+                part: 'Part I: Exploring and Understanding Data',
+                number: 5,
+                text: 'The weights of backpacks at a school are approximately normally distributed with a mean of 24 pounds and a standard deviation of 3 pounds. What percentage of students would you expect to have backpacks weighing between 18 pounds and 30 pounds?',
+                type: 'text',
+                correct: '95%'
+            },
+            {
+                id: 'p1q6',
+                part: 'Part I: Exploring and Understanding Data',
+                number: 6,
+                text: 'The average math test score at a school is 78 with a standard deviation of 6. A student scored a 91 on the exam. Is this score considered usual or unusual?',
+                type: 'single',
+                options: [
+                    { id: 'A', text: 'Usual, because the z-score is less than 1' },
+                    { id: 'B', text: 'Usual, because the z-score is close to 0' },
+                    { id: 'C', text: 'Unusual, because the z-score is greater than 2' },
+                    { id: 'D', text: 'Unusual, because the z-score is negative' }
+                ],
+                correct: ['C']
+            },
+            {
+                id: 'p1q7',
+                part: 'Part I: Exploring and Understanding Data',
+                number: 7,
+                text: 'The following data represent the number of minutes students spent studying for a math test:<br>22, 28, 31, 35, 41, 45, 48, 52, 58, 60, 95<br><br>Is 95 minutes an outlier?',
+                type: 'single',
+                options: [
+                    { id: 'A', text: 'No, because it is part of the dataset' },
+                    { id: 'B', text: 'No, because it does not fall outside the expected range' },
+                    { id: 'C', text: 'Yes, because it is much larger than the rest of the data' },
+                    { id: 'D', text: 'Yes, because it is smaller than most of the data' }
+                ],
+                correct: ['C']
+            },
+            {
+                id: 'p1q8',
+                part: 'Part I: Exploring and Understanding Data',
+                number: 8,
+                text: 'The following data represents the number of text messages sent in one day by a group of students:<br>12, 18, 21, 25, 29, 33, 38, 42, 47, 50<br><br>What is the value of the upper fence of a boxplot for this dataset? [Use the IQR*1.5 Rule of Thumb.]',
+                type: 'single',
+                options: [
+                    { id: 'A', text: '69.9' },
+                    { id: 'B', text: '73.5' },
+                    { id: 'C', text: '77.3' },
+                    { id: 'D', text: '81.0' }
+                ],
+                correct: ['B']
+            },
+            {
+                id: 'p2q1',
+                part: 'Part II: Exploring Relationships between Variables',
+                number: 1,
+                text: 'A scatterplot was created to model the relationship between the number of hours a student studies and their test score. The line of best fit for the data is: y = 8.76x - 339.03<br><br>Which statement best interprets the meaning of the slope in this situation?',
+                type: 'single',
+                options: [
+                    { id: 'A', text: 'For every additional hour studied, the student\'s test score increases by about 8.76 points.' },
+                    { id: 'B', text: 'The student\'s test score is -339.03 when they study 0 hours.' },
+                    { id: 'C', text: 'The test score always equals the number of hours studied multiplied by -339.03.' },
+                    { id: 'D', text: 'For every additional hour studied, the student\'s test score decreases by about 8.76 points.' },
+                    { id: 'E', text: 'The student must study at least 339.03 hours to earn any points on the test.' }
+                ],
+                correct: ['A']
+            },
+            {
+                id: 'p2q2',
+                part: 'Part II: Exploring Relationships between Variables',
+                number: 2,
+                text: 'Circle all statements below that are false.',
+                type: 'multiple',
+                options: [
+                    { id: 'A', text: 'The correlation coefficient measures the strength of a linear relationship.' },
+                    { id: 'B', text: 'The symbol used for the correlation coefficient is r.' },
+                    { id: 'C', text: 'A correlation coefficient can be greater than 1.' },
+                    { id: 'D', text: 'Values of r close to 0 indicate a strong linear relationship.' }
+                ],
+                correct: ['C', 'D']
+            },
+            {
+                id: 'p2q3',
+                part: 'Part II: Exploring Relationships between Variables',
+                number: 3,
+                text: 'Circle the scatterplot that indicates a strong, positive correlation between two variables.',
+                type: 'single',
+                options: [
+                    { id: 'A', text: 'r = 0.3' },
+                    { id: 'B', text: 'r = 0.7' },
+                    { id: 'C', text: 'r = -0.7' },
+                    { id: 'D', text: 'r = -0.3' }
+                ],
+                correct: ['B']
+            },
+            {
+                id: 'p2q4',
+                part: 'Part II: Exploring Relationships between Variables',
+                number: 4,
+                text: 'A linear regression model for housing prices delivers a residual value of 0 for one of the houses in the sample data. What does that mean?',
+                type: 'single',
+                options: [
+                    { id: 'A', text: 'The data point does not exist.' },
+                    { id: 'B', text: 'That house is the price the model predicts.' },
+                    { id: 'C', text: 'The house is more than the model predicts.' },
+                    { id: 'D', text: 'The owners made $0 profit when they sold the house.' }
+                ],
+                correct: ['B']
+            },
+            {
+                id: 'p3q1',
+                part: 'Part III: Gathering Data',
+                number: 1,
+                text: 'Circle the Population Parameter and draw a box around the Sample Statistic.<br><br>The administration at 96 High School wants to determine the average number of hours of sleep per night for all students at the school. To collect data, they randomly survey 50 students and find that these students sleep an average of 6.2 hours per night.',
+                type: 'text',
+                correct: 'Population Parameter: "average number of hours of sleep per night for all students at the school"<br>Sample Statistic: "these students sleep an average of 6.2 hours per night"'
+            },
+            {
+                id: 'p3q2a',
+                part: 'Part III: Gathering Data',
+                number: '2a',
+                text: 'A survey about school safety is conducted by emailing all students, but only students who feel very strongly about the issue choose to respond. What type of bias is this?',
+                type: 'single',
+                options: [
+                    { id: 'A', text: 'Undercoverage' },
+                    { id: 'B', text: 'Response bias' },
+                    { id: 'C', text: 'Voluntary response bias' },
+                    { id: 'D', text: 'Convenience Sample' }
+                ],
+                correct: ['C']
+            },
+            {
+                id: 'p3q2b',
+                part: 'Part III: Gathering Data',
+                number: '2b',
+                text: 'A survey question about curfew is worded as: "Do you agree that responsible students should be allowed to stay out past 11 p.m. on school nights?" What type of bias is this?',
+                type: 'single',
+                options: [
+                    { id: 'A', text: 'Undercoverage' },
+                    { id: 'B', text: 'Response bias' },
+                    { id: 'C', text: 'Voluntary response bias' },
+                    { id: 'D', text: 'Convenience Sample' }
+                ],
+                correct: ['B']
+            },
+            {
+                id: 'p3q3',
+                part: 'Part III: Gathering Data',
+                number: 3,
+                text: 'Which of the following best describes an experiment?',
+                type: 'single',
+                options: [
+                    { id: 'A', text: 'Observing student behavior without interference' },
+                    { id: 'B', text: 'Measuring rainfall across multiple cities' },
+                    { id: 'C', text: 'Assigning subjects to treatment and control groups' },
+                    { id: 'D', text: 'Surveying opinions online' }
+                ],
+                correct: ['C']
+            },
+            {
+                id: 'p3q4',
+                part: 'Part III: Gathering Data',
+                number: 4,
+                text: 'Which of these might use a placebo?',
+                type: 'single',
+                options: [
+                    { id: 'A', text: 'A survey' },
+                    { id: 'B', text: 'An observational study' },
+                    { id: 'C', text: 'An experiment' }
+                ],
+                correct: ['C']
+            },
+            {
+                id: 'p3q5',
+                part: 'Part III: Gathering Data',
+                number: 5,
+                text: 'The results of a simulation are considered statistically significant. This means...',
+                type: 'single',
+                options: [
+                    { id: 'A', text: 'the results are really important.' },
+                    { id: 'B', text: 'the results are biased.' },
+                    { id: 'C', text: 'the results are multiplied by a power of 10.' },
+                    { id: 'D', text: 'the results are not likely to happen by chance.' }
+                ],
+                correct: ['D']
+            },
+            {
+                id: 'p3q6',
+                part: 'Part III: Gathering Data',
+                number: 6,
+                text: 'A statistician assigns a number to each subject she wants to study. Starting with a random number, she observes every 4th subject. Which sampling method is being described?',
+                type: 'single',
+                options: [
+                    { id: 'A', text: 'Simple random sample' },
+                    { id: 'B', text: 'Stratified random sample' },
+                    { id: 'C', text: 'Cluster sample' },
+                    { id: 'D', text: 'Systematic sample' }
+                ],
+                correct: ['D']
+            },
+            {
+                id: 'p5q1',
+                part: 'Part V: From the Data at Hand to the World at Large',
+                number: 1,
+                text: 'A 90% confidence interval for a population mean is constructed using a sample. The same data are then used to construct a 99% confidence interval. Will the 99% confidence interval be narrower or wider than the 90% confidence interval?',
+                type: 'single',
+                options: [
+                    { id: 'A', text: 'Narrower' },
+                    { id: 'B', text: 'Wider' }
+                ],
+                correct: ['B']
+            },
+            {
+                id: 'p5q2',
+                part: 'Part V: From the Data at Hand to the World at Large',
+                number: 2,
+                text: 'A confidence interval for a population mean is constructed using a sample of n = 25. Another confidence interval is constructed using a sample of n = 100, with the same confidence level. Will the confidence interval based on n = 100 be narrower or wider than the one based on n = 25?',
+                type: 'single',
+                options: [
+                    { id: 'A', text: 'Narrower' },
+                    { id: 'B', text: 'Wider' }
+                ],
+                correct: ['A']
+            },
+            {
+                id: 'p5q3',
+                part: 'Part V: From the Data at Hand to the World at Large',
+                number: 3,
+                text: 'Circle all statements below that are FALSE.',
+                type: 'multiple',
+                options: [
+                    { id: 'A', text: 'A parameter is a numerical summary that describes a population.' },
+                    { id: 'B', text: 'A statistic is a numerical summary that describes a sample.' },
+                    { id: 'C', text: 'The population mean is usually denoted by μ.' },
+                    { id: 'D', text: 'The sample mean is usually denoted by x̄.' }
+                ],
+                correct: ['C', 'D']
+            },
+            {
+                id: 'p5q4',
+                part: 'Part V: From the Data at Hand to the World at Large',
+                number: 4,
+                text: 'Circle all statements below that are FALSE.',
+                type: 'multiple',
+                options: [
+                    { id: 'A', text: 'A confidence interval gives a range of plausible values for a population parameter.' },
+                    { id: 'B', text: 'The confidence level describes how confident we are that the interval contains the population parameter.' },
+                    { id: 'C', text: 'A 95% confidence interval guarantees that the true parameter is inside the interval we calculated.' },
+                    { id: 'D', text: 'Confidence intervals are built using sample statistics and probability models.' }
+                ],
+                correct: ['C']
+            },
+            {
+                id: 'p5q7',
+                part: 'Part V: From the Data at Hand to the World at Large',
+                number: 7,
+                text: 'A random sample of n = 64 students has a population standard deviation of σ = 12 hours of screen time per week. What is the standard deviation of the sample mean?',
+                type: 'single',
+                options: [
+                    { id: 'A', text: '0.75' },
+                    { id: 'B', text: '1.5' },
+                    { id: 'C', text: '6' },
+                    { id: 'D', text: '12' }
+                ],
+                correct: ['B']
+            },
+            {
+                id: 'p5q8',
+                part: 'Part V: From the Data at Hand to the World at Large',
+                number: 8,
+                text: 'Which of the following must exist to use the Central Limit Theorem? (Select all that apply.)',
+                type: 'multiple',
+                options: [
+                    { id: 'A', text: 'The sample must be randomly selected' },
+                    { id: 'B', text: 'The observations must be independent' },
+                    { id: 'C', text: 'The sample size must be large or the population distribution must be normal' },
+                    { id: 'D', text: 'The population must be at least 10 times the sample size if sampling without replacement' },
+                    { id: 'E', text: 'The population must always be normally distributed' },
+                    { id: 'F', text: 'The sample size must be equal to the population size' }
+                ],
+                correct: ['A', 'B', 'C', 'D']
+            },
+            {
+                id: 'p5q10',
+                part: 'Part V: From the Data at Hand to the World at Large',
+                number: 10,
+                text: 'A city claims that the average wait time at the DMV is 32 minutes. A random sample of drivers is collected, and a hypothesis test is performed at a significance level of α = 0.05. The test produces a p-value of 0.18. Which conclusion is correct?',
+                type: 'single',
+                options: [
+                    { id: 'A', text: 'Reject Ho. There is sufficient evidence that the average wait time is different from 32 minutes.' },
+                    { id: 'B', text: 'Fail to reject Ho. There is sufficient evidence that the average wait time is different from 32 minutes.' },
+                    { id: 'C', text: 'Fail to reject Ho. There is not sufficient evidence that the average wait time is different from 32 minutes.' },
+                    { id: 'D', text: 'Reject Ho. There is not sufficient evidence that the average wait time is different from 32 minutes.' }
+                ],
+                correct: ['C']
+            }
+        ];
+
+        let userAnswers = {};
+        let checked = false;
+
+        // Initialize the test
+        function initTest() {
+            const content = document.getElementById('test-content');
+            content.innerHTML = '';
+            
+            let currentPart = '';
+            questions.forEach((q, index) => {
+                if (q.part !== currentPart) {
+                    currentPart = q.part;
+                    const partHeader = document.createElement('div');
+                    partHeader.className = 'part-header';
+                    partHeader.textContent = q.part;
+                    content.appendChild(partHeader);
+                }
+
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.id = `q-${q.id}`;
+
+                const questionNumber = document.createElement('div');
+                questionNumber.className = 'question-number';
+                questionNumber.textContent = `Question ${q.number}`;
+                questionDiv.appendChild(questionNumber);
+
+                const questionText = document.createElement('div');
+                questionText.className = 'question-text';
+                questionText.innerHTML = q.text;
+                questionDiv.appendChild(questionText);
+
+                if (q.type === 'single' || q.type === 'multiple') {
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.className = 'options';
+
+                    q.options.forEach(option => {
+                        const optionDiv = document.createElement('div');
+                        optionDiv.className = 'option';
+                        
+                        const input = document.createElement('input');
+                        input.type = q.type === 'single' ? 'radio' : 'checkbox';
+                        input.name = q.id;
+                        input.value = option.id;
+                        input.id = `${q.id}-${option.id}`;
+                        input.addEventListener('change', () => handleAnswer(q.id));
+                        
+                        const label = document.createElement('label');
+                        label.htmlFor = `${q.id}-${option.id}`;
+                        label.textContent = `${option.id}. ${option.text}`;
+                        label.style.cursor = 'pointer';
+                        label.style.flex = '1';
+
+                        optionDiv.appendChild(input);
+                        optionDiv.appendChild(label);
+                        optionDiv.addEventListener('click', (e) => {
+                            if (e.target !== input) {
+                                input.checked = !input.checked;
+                                handleAnswer(q.id);
+                            }
+                        });
+
+                        optionsDiv.appendChild(optionDiv);
+                    });
+
+                    questionDiv.appendChild(optionsDiv);
+                } else if (q.type === 'text') {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'text-input';
+                    input.id = `${q.id}-input`;
+                    input.placeholder = 'Type your answer here...';
+                    input.addEventListener('input', () => handleAnswer(q.id));
+                    questionDiv.appendChild(input);
+                }
+
+                content.appendChild(questionDiv);
+            });
+
+            updateStats();
+        }
+
+        function handleAnswer(questionId) {
+            const question = questions.find(q => q.id === questionId);
+            if (!question) return;
+
+            if (question.type === 'single') {
+                const selected = document.querySelector(`input[name="${questionId}"]:checked`);
+                userAnswers[questionId] = selected ? [selected.value] : [];
+            } else if (question.type === 'multiple') {
+                const selected = Array.from(document.querySelectorAll(`input[name="${questionId}"]:checked`))
+                    .map(input => input.value);
+                userAnswers[questionId] = selected;
+            } else if (question.type === 'text') {
+                const input = document.getElementById(`${questionId}-input`);
+                userAnswers[questionId] = input ? input.value.trim() : '';
+            }
+
+            // Mark question as answered
+            const questionDiv = document.getElementById(`q-${questionId}`);
+            if (userAnswers[questionId] && 
+                (Array.isArray(userAnswers[questionId]) ? userAnswers[questionId].length > 0 : userAnswers[questionId] !== '')) {
+                questionDiv.classList.add('answered');
+            } else {
+                questionDiv.classList.remove('answered');
+            }
+
+            updateStats();
+        }
+
+        function updateStats() {
+            let correct = 0;
+            let wrong = 0;
+            let unanswered = 0;
+            const total = questions.length;
+
+            questions.forEach(q => {
+                const answer = userAnswers[q.id];
+                if (!answer || (Array.isArray(answer) && answer.length === 0) || (typeof answer === 'string' && answer === '')) {
+                    unanswered++;
+                } else if (checked) {
+                    if (isCorrect(q, answer)) {
+                        correct++;
+                    } else {
+                        wrong++;
+                    }
+                }
+            });
+
+            document.getElementById('correct-count').textContent = correct;
+            document.getElementById('wrong-count').textContent = wrong;
+            document.getElementById('unanswered-count').textContent = unanswered;
+
+            const answered = total - unanswered;
+            const progress = total > 0 ? (answered / total) * 100 : 0;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+            document.getElementById('progress-fill').textContent = `${Math.round(progress)}%`;
+            document.getElementById('progress-text').textContent = `${answered} / ${total}`;
+        }
+
+        function isCorrect(question, userAnswer) {
+            if (question.type === 'text') {
+                // For text answers, do a case-insensitive comparison
+                const correct = question.correct.toLowerCase().trim();
+                const answer = userAnswer.toLowerCase().trim();
+                // Check if answer contains key parts of correct answer
+                return answer.includes(correct) || correct.includes(answer) || 
+                       Math.abs(parseFloat(answer) - parseFloat(correct)) < 0.1;
+            } else {
+                const correct = [...question.correct].sort().join(',');
+                const answer = Array.isArray(userAnswer) ? [...userAnswer].sort().join(',') : userAnswer;
+                return correct === answer;
+            }
+        }
+
+        function checkAnswers() {
+            checked = true;
+            let correct = 0;
+            let wrong = 0;
+
+            questions.forEach(q => {
+                const questionDiv = document.getElementById(`q-${q.id}`);
+                const answer = userAnswers[q.id];
+                const isAnswerCorrect = answer && isCorrect(q, answer);
+
+                if (q.type === 'single' || q.type === 'multiple') {
+                    q.options.forEach(option => {
+                        const optionDiv = document.querySelector(`#${q.id}-${option.id}`).closest('.option');
+                        const isSelected = Array.isArray(answer) ? answer.includes(option.id) : answer === option.id;
+                        const isCorrectOption = q.correct.includes(option.id);
+
+                        if (isCorrectOption) {
+                            optionDiv.classList.add('correct');
+                        } else if (isSelected && !isCorrectOption) {
+                            optionDiv.classList.add('incorrect');
+                        }
+                        optionDiv.classList.remove('selected');
+                    });
+                } else if (q.type === 'text') {
+                    const input = document.getElementById(`${q.id}-input`);
+                    if (isAnswerCorrect) {
+                        input.style.borderColor = '#28a745';
+                        input.style.background = '#d4edda';
+                    } else {
+                        input.style.borderColor = '#dc3545';
+                        input.style.background = '#f8d7da';
+                    }
+                }
+
+                if (isAnswerCorrect) {
+                    correct++;
+                } else if (answer && (Array.isArray(answer) ? answer.length > 0 : answer !== '')) {
+                    wrong++;
+                }
+            });
+
+            updateStats();
+
+            // Show results
+            const resultsDiv = document.getElementById('results');
+            const total = questions.length;
+            const score = total > 0 ? Math.round((correct / total) * 100) : 0;
+            
+            document.getElementById('final-score').textContent = `${score}%`;
+            document.getElementById('results-text').textContent = 
+                `You got ${correct} out of ${total} questions correct!`;
+            
+            resultsDiv.classList.add('show');
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function resetTest() {
+            checked = false;
+            userAnswers = {};
+            document.getElementById('results').classList.remove('questions');
+            initTest();
+        }
+
+        // Initialize on page load
+        initTest();
+    </script>
+</body>
+</html>
+
